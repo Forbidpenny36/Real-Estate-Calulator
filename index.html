@@ -3,117 +3,104 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Real Estate Estimate Calculator</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real Estate Estimator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f0f4f8;
-      margin: 0;
-      padding: 2rem;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      background-color: #f2f4f8;
+      margin: 0;
     }
-
     .container {
-      background: white;
+      background-color: #fff;
       padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      max-width: 500px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       width: 100%;
+      max-width: 500px;
     }
-
     h1 {
       text-align: center;
-      margin-bottom: 1rem;
-      font-size: 1.8rem;
-      color: #333;
+      margin-bottom: 1.5rem;
     }
-
     label {
       display: block;
-      margin-top: 1rem;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: #333;
+      margin: 1rem 0 0.25rem;
     }
-
     input {
       width: 100%;
-      padding: 0.75rem;
+      padding: 0.5rem;
+      border-radius: 6px;
       border: 1px solid #ccc;
-      border-radius: 0.5rem;
-      font-size: 1rem;
     }
-
     button {
       margin-top: 1.5rem;
       width: 100%;
       padding: 0.75rem;
-      background-color: #2563eb;
+      background-color: #007bff;
       color: white;
       border: none;
-      border-radius: 0.5rem;
+      border-radius: 6px;
       font-size: 1rem;
-      font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
     }
-
     button:hover {
-      background-color: #1e40af;
+      background-color: #0056b3;
     }
-
     .result {
-      margin-top: 1.5rem;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #10b981;
+      margin-top: 1rem;
+      font-weight: bold;
+      color: green;
       text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Real Estate Estimate Calculator</h1>
-    <form action="https://formspree.io/f/myzwrnwa" method="POST" onsubmit="return calculateAndSend()">
-      <input type="hidden" name="_subject" value="New Estimate Submission" />
+    <h1>Real Estate Estimate</h1>
+    <form id="estimate-form">
+      <label for="address">Property Address</label>
+      <input type="text" id="address" name="address" required />
 
-      <label for="sqft">Square Footage</label>
-      <input type="number" id="sqft" name="Square Footage" required />
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" required placeholder="e.g. 123-456-7890"/>
 
-      <label for="bedrooms">Bedrooms</label>
-      <input type="number" id="bedrooms" name="Bedrooms" required />
-
-      <label for="bathrooms">Bathrooms</label>
-      <input type="number" id="bathrooms" name="Bathrooms" required />
-
-      <input type="hidden" id="estimateField" name="Estimated Value" />
-
-      <button type="submit">Calculate & Submit</button>
-
-      <div class="result" id="resultBox"></div>
+      <button type="submit">Get Estimate</button>
     </form>
+    <div class="result" id="result"></div>
   </div>
 
   <script>
-    function calculateAndSend() {
-      const sqft = parseFloat(document.getElementById('sqft').value) || 0;
-      const bedrooms = parseInt(document.getElementById('bedrooms').value) || 0;
-      const bathrooms = parseInt(document.getElementById('bathrooms').value) || 0;
+    document.getElementById('estimate-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const address = document.getElementById('address').value;
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = 'Fetching estimate...';
 
-      const estimate = (sqft * 120) + (bedrooms * 10000) + (bathrooms * 8000);
-      const resultBox = document.getElementById('resultBox');
-      resultBox.textContent = "Estimated Value: $" + estimate.toLocaleString();
-
-      document.getElementById('estimateField').value = "$" + estimate.toLocaleString();
-
-      return true; // allow form to submit
-    }
+      fetch(`https://api.rentcast.io/v1/property?address=${encodeURIComponent(address)}`, {
+        headers: {
+          'Accept': 'application/json',
+          'X-Api-Key': 'db9b7113368a4491838b51945a56c288'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.estimatedValue) {
+          resultDiv.textContent = `Estimated Property Value: $${data.estimatedValue.toLocaleString()}`;
+        } else {
+          resultDiv.textContent = 'Estimate not available for this address.';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        resultDiv.textContent = 'Failed to fetch estimate.';
+      });
+    });
   </script>
 </body>
 </html>
