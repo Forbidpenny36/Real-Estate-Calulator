@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Real Estate Estimate Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #1e40af;
+    }
+
+    .result {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #10b981;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Real Estate Estimate Calculator</h1>
+    <form action="https://formspree.io/f/myzwrnwa" method="POST" onsubmit="return calculateAndSend()">
+      <input type="hidden" name="_subject" value="New Estimate Submission" />
+
+      <label for="sqft">Square Footage</label>
+      <input type="number" id="sqft" name="Square Footage" required />
+
+      <label for="bedrooms">Bedrooms</label>
+      <input type="number" id="bedrooms" name="Bedrooms" required />
+
+      <label for="bathrooms">Bathrooms</label>
+      <input type="number" id="bathrooms" name="Bathrooms" required />
+
+      <input type="hidden" id="estimateField" name="Estimated Value" />
+
+      <button type="submit">Calculate & Submit</button>
+
+      <div class="result" id="resultBox"></div>
+    </form>
+  </div>
+
+  <script>
+    function calculateAndSend() {
+      const sqft = parseFloat(document.getElementById('sqft').value) || 0;
+      const bedrooms = parseInt(document.getElementById('bedrooms').value) || 0;
+      const bathrooms = parseInt(document.getElementById('bathrooms').value) || 0;
+
+      const estimate = (sqft * 120) + (bedrooms * 10000) + (bathrooms * 8000);
+      const resultBox = document.getElementById('resultBox');
+      resultBox.textContent = "Estimated Value: $" + estimate.toLocaleString();
+
+      document.getElementById('estimateField').value = "$" + estimate.toLocaleString();
+
+      return true; // allow form to submit
+    }
+  </script>
+</body>
+</html>
